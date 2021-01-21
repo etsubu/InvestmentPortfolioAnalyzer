@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.ZoneOffset;
@@ -18,14 +19,13 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 public class TransactionReader {
     private static final Logger log = LoggerFactory.getLogger(TransactionReader.class);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyyHH:mm");
 
     public static List<Transaction> readTransactionsDegiro(Path file) throws IOException {
-        try(BufferedReader br = new BufferedReader(new FileReader(file.toFile()))) {
+        try(BufferedReader br = new BufferedReader(new FileReader(file.toFile(), StandardCharsets.UTF_8))) {
             br.readLine();
             String line;
             LinkedList<Transaction> transactions = new LinkedList<>();

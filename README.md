@@ -7,9 +7,26 @@ tax reports.
 
 ## How to build
 
+You need to have java jdk 11 or newer installed to compile the application.
+Java JRE is enough for running the tool.
+
+
+### Installing java
+#### Windows
+You can download and install java jdk for windows from [https://adoptopenjdk.net/](https://adoptopenjdk.net/)
+
+#### Debian
+For debian based distros you can install java jdk with
+`sudo apt install openjdk-11-jdk-headless -y`
+
+### Building the application
+
 ```
-TODO
+https://github.com/etsubu/InvestmentPortfolioAnalyzer.git
+cd InvestmentPortfolioAnalyzer
+./gradlew clean build
 ```
+The application will be located in build/libs folder
 
 ## How to use 
 

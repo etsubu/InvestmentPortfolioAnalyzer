@@ -16,7 +16,12 @@ import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        List<Transaction> transactions = TransactionReader.readTransactionsDegiro(Paths.get("transactions.csv"));
+        Path transactionsFile = Path.of(args.length > 0 ? args[0] : "transactions.csv");
+        if(Files.notExists(transactionsFile)) {
+            System.out.println("Transactions file does not exist!");
+            System.exit(0);
+        }
+        List<Transaction> transactions = TransactionReader.readTransactionsDegiro(transactionsFile);
         Portfolio portfolio = new Portfolio();
         for(Transaction t : transactions) {
             portfolio.executeTransaction(t);
