@@ -1,0 +1,61 @@
+plugins {
+    id "io.freefair.lombok" version "5.3.0"
+    id "org.owasp.dependencycheck" version "6.0.3"
+    id "com.github.spotbugs" version "4.6.0"
+    id "com.github.johnrengelman.shadow" version "6.1.0"
+    id "com.github.ben-manes.versions" version "0.36.0"
+    id 'se.patrikerdes.use-latest-versions' version '0.2.15'
+    id "java"
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+test {
+    useJUnitPlatform()
+}
+
+compileJava.options.encoding = 'UTF-8'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+dependencies {
+    implementation ('org.springframework.boot:spring-boot-starter-web:2.4.1'){
+        exclude module: 'spring-boot-starter-logging'
+    }
+    implementation 'org.springframework.boot:spring-boot-starter-log4j2:2.4.1'
+    implementation 'org.xerial:sqlite-jdbc:3.34.0'
+    implementation 'org.yaml:snakeyaml:1.27'
+    implementation 'org.ta4j:ta4j-core:0.13'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'org.json:json:20201115'
+    implementation 'org.xerial:sqlite-jdbc:3.34.0'
+    compile group: 'com.itextpdf', name: 'kernel', version: '7.1.14'
+    implementation 'org.apache.pdfbox:pdfbox:2.0.22'
+    compile group: 'com.itextpdf', name: 'forms', version: '7.1.14'
+    implementation ('net.dv8tion:JDA:4.2.0_225') {
+        exclude module: 'opus-java'
+    }
+    implementation 'org.slf4j:slf4j-api:1.7.30'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    testImplementation 'org.mockito:mockito-core:3.6.28'
+    testImplementation 'org.mockito:mockito-junit-jupiter:3.6.28'
+}
+
+group = 'org.portfoliotracker'
+version = '1.0-SNAPSHOT'
+
+sourceCompatibility = 11
+targetCompatibility = 11
+
+jar {
+    manifest {
+        attributes "Version" : project.version
+        attributes "Main-Class": "com.etsubu.portfoliotracker.Main"
+    }
+}

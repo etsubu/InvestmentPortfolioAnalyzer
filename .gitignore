@@ -1,0 +1,7 @@
+.gradle/
+build/
+.idea/
+logs/
+*.pdf
+lombok.config
+*.csv
