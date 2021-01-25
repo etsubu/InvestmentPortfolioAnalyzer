@@ -38,4 +38,11 @@ authority [vero.fi](https://www.vero.fi). The tax report outputs are most likely
 tax authorities as well but these are not supported. Author takes no responsibility in mistakes or invalid 
 values in the tax report output and the user shall take full responsibility for their tax report.
 
-TODO
+### Generating 9A tax report
+
+Open the application with transactions.csv exported from degiro. This file should contain all transactions that you've 
+made on the broker. Alternatively if the file name is transactions.csv then it is enough to place it in the same folder 
+as the application when you start it.
+
+The application will generate 9A reports for every year that you've sold assets on. This report does not include dividends.
+ You should add your personal information such as name and social security number as well.
