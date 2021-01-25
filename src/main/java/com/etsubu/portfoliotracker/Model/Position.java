@@ -52,10 +52,10 @@ public class Position {
             // We only add the transaction fee to one of the transactions under this order
             if(addFee) {
                 closedTrades.add(new ClosedTrades(t, o, sharesSold, t.sellFxAdjusted(sharesSold, o),
-                        Optional.ofNullable(t.getTransactionFee()).orElse(PrecisionNum.valueOf(0)),
-                        Optional.ofNullable(o.getTransactionFee()).orElse(PrecisionNum.valueOf(0))));
+                        Optional.ofNullable(t.getTransactionFee()).orElse(ZERO),
+                        Optional.ofNullable(o.getTransactionFee()).orElse(ZERO)));
             } else {
-                closedTrades.add(new ClosedTrades(t, o, sharesSold, t.sellFxAdjusted(sharesSold, o), PrecisionNum.valueOf(0), PrecisionNum.valueOf(0)));
+                closedTrades.add(new ClosedTrades(t, o, sharesSold, t.sellFxAdjusted(sharesSold, o), ZERO, ZERO));
             }
             if(t.getQuantity().isZero()) {
                 orders.removeFirst();
@@ -68,11 +68,11 @@ public class Position {
 
     public Num value() {
         return orders.stream().map(x -> x.getPrice().multipliedBy(x.getQuantity()))
-                .reduce(PrecisionNum.valueOf(0), Num::plus);
+                .reduce(ZERO, Num::plus);
     }
 
     public Num shares() {
-        return orders.stream().map(Order::getQuantity).reduce(PrecisionNum.valueOf(0), Num::plus);
+        return orders.stream().map(Order::getQuantity).reduce(ZERO, Num::plus);
     }
 
     @Override

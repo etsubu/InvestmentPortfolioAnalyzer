@@ -1,9 +1,11 @@
 package com.etsubu.portfoliotracker.Model;
 
+import com.etsubu.portfoliotracker.Utils.MathUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 import org.ta4j.core.num.Num;
+import org.ta4j.core.num.PrecisionNum;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -23,7 +25,7 @@ public class ClosedTrades {
 
     private Num getTransactionSum(Order order) {
         return Optional.ofNullable(order.getFxRate())
-                .map(x -> quantity.abs().multipliedBy(order.getPrice()).dividedBy(x))
+                .map(x -> MathUtils.round(quantity.abs().multipliedBy(order.getPrice()).dividedBy(x)))
                 .orElseGet(() -> quantity.abs().multipliedBy(order.getPrice()));
     }
 
@@ -43,7 +45,20 @@ public class ClosedTrades {
 
     public Num getSellFees() { return sellOrder.getTransactionFee(); }
 
+    public Num getCostAdjustedGain() {
+        return gain.plus(buyFee).plus(sellFee);
+    }
+
     public String getAsCsv() {
-        return buyOrder.getStock().getName() + "," + buyOrder.getStock().getISIN() + "," + formatter.format(getBuyDate()) + "," + formatter.format(getSellDate()) + "," + getBuyAmount() + "," + getSellAmount() + "," + buyFee + "," + sellFee + "," + gain;
+        return buyOrder.getStock().getName()
+                + "," + buyOrder.getStock().getISIN()
+                + "," + getQuantity()
+                + "," + formatter.format(getBuyDate())
+                + "," + formatter.format(getSellDate())
+                + "," + MathUtils.format(getSellAmount())
+                + "," + MathUtils.format(getBuyAmount())
+                + "," + buyFee
+                + "," + sellFee
+                + "," + MathUtils.format(getCostAdjustedGain());
     }
 }

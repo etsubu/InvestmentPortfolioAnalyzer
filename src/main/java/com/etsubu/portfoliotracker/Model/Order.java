@@ -1,5 +1,6 @@
 package com.etsubu.portfoliotracker.Model;
 
+import com.etsubu.portfoliotracker.Utils.MathUtils;
 import lombok.Getter;
 import lombok.ToString;
 import org.slf4j.Logger;
@@ -27,7 +28,7 @@ public class Order extends Transaction{
         if(t.getFxRate() != null) {
             buyNetPrice = buyNetPrice.dividedBy(this.fxRate);
             log.info("Quantity: {}, fx: {}, price: {}, new price: {}, initial value: {}, {}", quantity, t.getFxRate(), t.getPrice(), getPrice(), buyNetPrice, getTransactionFee());
-            return (sellNetPrice.dividedBy(t.getFxRate())).minus(buyNetPrice);
+            return MathUtils.round(sellNetPrice.dividedBy(t.getFxRate()).minus(buyNetPrice));
         }
         return sellNetPrice.minus(buyNetPrice);
     }
