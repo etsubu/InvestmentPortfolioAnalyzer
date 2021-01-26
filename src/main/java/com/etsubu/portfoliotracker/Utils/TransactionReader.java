@@ -32,7 +32,7 @@ public class TransactionReader {
     private static final String PRICE = "Kurssi";
     private static final String MARKET_VALUE = "Markkina-arvo";
     private static final String FX_RATE = "Vaihtokurssi";
-    private static final String TRANSACTION_FEE = "Transaction";
+    private static final String TRANSACTION_FEE = "Transaction costs";
     private static final String ORDER_ID = "Order ID";
 
 
