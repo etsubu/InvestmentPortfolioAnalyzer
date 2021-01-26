@@ -9,6 +9,8 @@ import org.ta4j.core.num.PrecisionNum;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -50,7 +52,7 @@ public class Portfolio {
         Num totalGains = (trades.stream().map(ClosedTrades::getCostAdjustedGain).filter(Num::isPositive).reduce(PrecisionNum.valueOf(0), Num::plus));
         Num totalLosses = (trades.stream().map(ClosedTrades::getCostAdjustedGain).filter(Num::isNegative).reduce(PrecisionNum.valueOf(0), Num::plus));
         Num netGain = (totalGains.plus(totalLosses));
-        try(BufferedWriter bw = new BufferedWriter(new FileWriter(file.toFile()))) {
+        try(BufferedWriter bw = Files.newBufferedWriter(file, StandardCharsets.UTF_8)) {
             bw.write("Yhteenveto");
             bw.newLine();
             bw.write("Voitot yhteensä,Tappiot yhteensä,Voitot/Tappiot valitut");

@@ -7,7 +7,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.BaseBarSeries;
 import org.ta4j.core.num.PrecisionNum;
@@ -26,7 +25,6 @@ import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-@Component
 public class YahooFinanceConnector {
     private static final Logger log = LoggerFactory.getLogger(YahooFinanceConnector.class);
     private static final String PRICE_DATA_TIMESERIES_URL =  "https://query1.finance.yahoo.com/v8/finance/chart/%s?interval=1d&includeAdjustedClose=true&period1=%d&period2=%d";
