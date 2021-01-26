@@ -14,18 +14,22 @@ import java.util.List;
 public class Main {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
-    public static void main(String[] args) throws IOException {
-        Path transactionsFile = Path.of(args.length > 0 ? args[0] : "transactions.csv");
-        if(Files.notExists(transactionsFile)) {
-            log.info("Transactions file does not exist!");
-            System.exit(0);
+    public static void main(String[] args) {
+        try {
+            Path transactionsFile = Path.of(args.length > 0 ? args[0] : "transactions.csv");
+            if (Files.notExists(transactionsFile)) {
+                log.info("Transactions file does not exist!");
+                System.exit(0);
+            }
+            List<Transaction> transactions = TransactionReader.readTransactionsDegiro(transactionsFile);
+            Portfolio portfolio = new Portfolio();
+            for (Transaction t : transactions) {
+                portfolio.executeTransaction(t);
+            }
+            portfolio.listPositions().forEach(x -> log.info(x.toString()));
+            portfolio.write9ATaxReports();
+        } catch (Exception e) {
+            log.error("Failed to create 9A report", e);
         }
-        List<Transaction> transactions = TransactionReader.readTransactionsDegiro(transactionsFile);
-        Portfolio portfolio = new Portfolio();
-        for(Transaction t : transactions) {
-            portfolio.executeTransaction(t);
-        }
-        portfolio.listPositions().forEach(x -> log.info(x.toString()));
-        portfolio.write9ATaxReports();
     }
 }

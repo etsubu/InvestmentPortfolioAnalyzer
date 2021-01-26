@@ -24,7 +24,7 @@ public class TransactionReader {
     private static final Logger log = LoggerFactory.getLogger(TransactionReader.class);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyyHH:mm");
 
-    public static List<Transaction> readTransactionsDegiro(Path file) throws IOException {
+    public static List<Transaction> readTransactionsDegiro(Path file) throws Exception {
         try(BufferedReader br = new BufferedReader(new FileReader(file.toFile(), StandardCharsets.UTF_8))) {
             br.readLine();
             String line;
@@ -35,7 +35,7 @@ public class TransactionReader {
                 transactions.addFirst(parseDegiroTransaction(line));
             }
             return transactions;
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("Failed to read transactions", e);
             throw e;
         }
