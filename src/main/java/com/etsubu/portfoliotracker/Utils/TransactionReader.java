@@ -17,22 +17,33 @@ import java.nio.file.Path;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class TransactionReader {
     private static final Logger log = LoggerFactory.getLogger(TransactionReader.class);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyyHH:mm");
+    private static final String DATE = "Päiväys";
+    private static final String TIME = "Aika";
+    private static final String NAME = "Tuote";
+    private static final String ISIN = "ISIN";
+    private static final String EXCHANGE = "Reference exchange";
+    private static final String QUANTITY = "Quantity";
+    private static final String PRICE = "Kurssi";
+    private static final String MARKET_VALUE = "Markkina-arvo";
+    private static final String FX_RATE = "Vaihtokurssi";
+    private static final String TRANSACTION_FEE = "Transaction";
+    private static final String ORDER_ID = "Order ID";
+
 
     public static List<Transaction> readTransactionsDegiro(Path file) throws Exception {
-        try(BufferedReader br = new BufferedReader(new FileReader(file.toFile(), StandardCharsets.UTF_8))) {
-            br.readLine();
+        try(BufferedReader br = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
+            Map<String, Integer> headerIndex = createHeaderMap(br.readLine());
             String line;
             LinkedList<Transaction> transactions = new LinkedList<>();
             log.info("Init");
             while((line = br.readLine()) != null) {
                 log.info("line: {}", line);
-                transactions.addFirst(parseDegiroTransaction(line));
+                transactions.addFirst(parseDegiroTransaction(line, headerIndex));
             }
             return transactions;
         } catch (Exception e) {
@@ -41,26 +52,37 @@ public class TransactionReader {
         }
     }
 
-    private static Transaction parseDegiroTransaction(String line) {
+    private static Map<String, Integer> createHeaderMap(String headerLine) {
+        String[] headerParts = headerLine.split(",", -1);
+        Map<String, Integer> headerIndex = new HashMap<>();
+        for(int i = 0; i < headerParts.length; i++) {
+            if(headerParts[i] != null && !headerParts[i].isEmpty()) {
+                headerIndex.put(headerParts[i], i);
+            }
+        }
+        return headerIndex;
+    }
+
+    private static Transaction parseDegiroTransaction(String line, Map<String, Integer> headerIndex) {
         String[] parts = line.split(",", -1);
         if(parts.length < 15) {
             throw new IllegalArgumentException("Failed parse transaction " + line);
         }
         try {
-            String date = parts[0];
-            String time = parts[1];
-            String name = parts[2];
-            String isin = parts[3];
-            String exchange = parts[4];
-            String orderId = parts[parts.length - 1];
-            Num quantity = PrecisionNum.valueOf(parts[5]);
-            String currency = parts[6];
-            Num price = PrecisionNum.valueOf(parts[7]);
-            Num fxRate = parts[12].isEmpty() ? null : PrecisionNum.valueOf(parts[12]);
-            Num fees = parts[14].isEmpty() ? null : PrecisionNum.valueOf(parts[14]);
+            String date = parts[headerIndex.get(DATE)];
+            String time = parts[headerIndex.get(TIME)];
+            String name = parts[headerIndex.get(NAME)];
+            String isin = parts[headerIndex.get(ISIN)];
+            //String exchange = parts[headerIndex.get(EXCHANGE)];
+            String orderId = parts[headerIndex.get(ORDER_ID)];
+            Num quantity = PrecisionNum.valueOf(parts[headerIndex.get(QUANTITY)]);
+            //String currency = parts[6];
+            Num price = PrecisionNum.valueOf(parts[headerIndex.get(PRICE)]);
+            Num fxRate = Optional.ofNullable(headerIndex.get(FX_RATE)).map(x -> parts[x].isEmpty() ? null : PrecisionNum.valueOf(parts[x])).orElse(null);
+            Num fees = Optional.ofNullable(headerIndex.get(TRANSACTION_FEE)).map(x -> parts[x].isEmpty() ? null : PrecisionNum.valueOf(parts[x])).orElse(null);
             return new Transaction(ZonedDateTime.parse(date + "" + time, formatter.withZone(ZoneOffset.UTC)),
-                    new Stock(isin, name, currency),
-                    exchange,
+                    new Stock(isin, name),
+
                     quantity,
                     price,
                     fees,

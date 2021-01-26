@@ -17,7 +17,6 @@ public class Transaction {
     public static final Num DEGIRO_FX_FEE_RATE = PrecisionNum.valueOf(0.001); // 0.1%
     protected ZonedDateTime time;
     protected Stock stock;
-    protected String exchange;
     protected Num quantity;
     protected Num price;
     protected Num transactionFee;

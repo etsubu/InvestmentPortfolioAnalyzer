@@ -77,6 +77,6 @@ public class Position {
 
     @Override
     public String toString() {
-        return stock.getName() + " - " + stock.getISIN() + " - " + stock.getCurrency() + "; " + shares() + " => " + value();
+        return stock.getName() + " - " + stock.getISIN() + " - " +  "; " + shares() + " => " + value();
     }
 }

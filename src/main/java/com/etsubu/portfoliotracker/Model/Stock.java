@@ -10,7 +10,6 @@ import lombok.ToString;
 public class Stock {
     private final String ISIN;
     private final String name;
-    private final String currency;
 
     @Override
     public int hashCode() {

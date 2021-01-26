@@ -14,7 +14,7 @@ public class Order extends Transaction{
     private final Num initialAmount;
 
     public Order(Transaction t) {
-        super(t.getTime(), t.getStock(), t.getExchange(), t.getQuantity(), t.getPrice(), t.getTransactionFee(), t.getFxRate(), t.getFxFeeRate(), t.getOrderId(), null);
+        super(t.getTime(), t.getStock(), t.getQuantity(), t.getPrice(), t.getTransactionFee(), t.getFxRate(), t.getFxFeeRate(), t.getOrderId(), null);
         initialAmount = this.quantity;
     }
 
