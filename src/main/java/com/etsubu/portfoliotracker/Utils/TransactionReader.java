@@ -2,6 +2,7 @@ package com.etsubu.portfoliotracker.Utils;
 
 import com.etsubu.portfoliotracker.Model.Stock;
 import com.etsubu.portfoliotracker.Model.Transaction;
+import com.opencsv.CSVReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ta4j.core.num.Num;
@@ -36,14 +37,14 @@ public class TransactionReader {
 
 
     public static List<Transaction> readTransactionsDegiro(Path file) throws Exception {
-        try(BufferedReader br = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
-            Map<String, Integer> headerIndex = createHeaderMap(br.readLine());
-            String line;
+        try (CSVReader reader = new CSVReader(new FileReader(file.toFile(), StandardCharsets.UTF_8))) {
+            String[] lineInArray;
+            Map<String, Integer> headerIndex = createHeaderMap(reader.readNext());
             LinkedList<Transaction> transactions = new LinkedList<>();
             log.info("Init");
-            while((line = br.readLine()) != null) {
-                log.info("line: {}", line);
-                transactions.addFirst(parseDegiroTransaction(line, headerIndex));
+            while ((lineInArray = reader.readNext()) != null) {
+                log.info("Line: {}", String.join("-", lineInArray));
+                parseDegiroTransaction(lineInArray, headerIndex).ifPresent(transactions::addFirst);
             }
             return transactions;
         } catch (Exception e) {
@@ -52,8 +53,7 @@ public class TransactionReader {
         }
     }
 
-    private static Map<String, Integer> createHeaderMap(String headerLine) {
-        String[] headerParts = headerLine.split(",", -1);
+    private static Map<String, Integer> createHeaderMap(String[] headerParts) {
         Map<String, Integer> headerIndex = new HashMap<>();
         for(int i = 0; i < headerParts.length; i++) {
             if(headerParts[i] != null && !headerParts[i].isEmpty()) {
@@ -63,12 +63,12 @@ public class TransactionReader {
         return headerIndex;
     }
 
-    private static Transaction parseDegiroTransaction(String line, Map<String, Integer> headerIndex) {
-        String[] parts = line.split(",", -1);
-        if(parts.length < 15) {
-            throw new IllegalArgumentException("Failed parse transaction " + line);
-        }
+    private static Optional<Transaction> parseDegiroTransaction(String[] parts, Map<String, Integer> headerIndex) {
         try {
+            if(parts[headerIndex.get(DATE)].isEmpty()) {
+                log.warn("Received broken line with no date. Skipping: {}", String.join(",", parts));
+                return Optional.empty();
+            }
             String date = parts[headerIndex.get(DATE)];
             String time = parts[headerIndex.get(TIME)];
             String name = parts[headerIndex.get(NAME)];
@@ -80,7 +80,7 @@ public class TransactionReader {
             Num price = PrecisionNum.valueOf(parts[headerIndex.get(PRICE)]);
             Num fxRate = Optional.ofNullable(headerIndex.get(FX_RATE)).map(x -> parts[x].isEmpty() ? null : PrecisionNum.valueOf(parts[x])).orElse(null);
             Num fees = Optional.ofNullable(headerIndex.get(TRANSACTION_FEE)).map(x -> parts[x].isEmpty() ? null : PrecisionNum.valueOf(parts[x])).orElse(null);
-            return new Transaction(ZonedDateTime.parse(date + "" + time, formatter.withZone(ZoneOffset.UTC)),
+            return Optional.of(new Transaction(ZonedDateTime.parse(date + "" + time, formatter.withZone(ZoneOffset.UTC)),
                     new Stock(isin, name),
 
                     quantity,
@@ -89,7 +89,7 @@ public class TransactionReader {
                     fxRate,
                     Transaction.DEGIRO_FX_FEE_RATE,
                     orderId,
-                    null);
+                    null));
         } catch (Exception e) {
             log.error("Failed to parse degiro transaction");
             throw e;

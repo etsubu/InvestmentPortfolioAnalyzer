@@ -26,6 +26,7 @@ dependencies {
     implementation 'org.ta4j:ta4j-core:0.13'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'org.json:json:20201115'
+    implementation 'com.opencsv:opencsv:5.3'
 
     implementation 'org.slf4j:slf4j-api:1.7.30'
     implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.13.3'
