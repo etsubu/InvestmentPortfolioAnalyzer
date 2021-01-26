@@ -24,7 +24,7 @@ For debian based distros you can install java jdk with
 ```
 https://github.com/etsubu/InvestmentPortfolioAnalyzer.git
 cd InvestmentPortfolioAnalyzer
-./gradlew clean build
+./gradlew shadowJar
 ```
 The application will be located in build/libs folder
 
